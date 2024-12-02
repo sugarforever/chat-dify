@@ -15,42 +15,13 @@ export default function Navbar() {
   const { data: session } = useSession();
 
   return (
-    <nav className="bg-background border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="ml-10 flex items-baseline space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
-                首页
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center">
-            {session ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium">{session.user?.name}</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="focus:outline-none">
-                    <Avatar>
-                      <AvatarImage src={session.user?.image || undefined} alt={session.user?.name || "User"} />
-                      <AvatarFallback>{session.user?.name?.[0] || "U"}</AvatarFallback>
-                    </Avatar>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem className="justify-end" onClick={() => signOut()}>
-                      退出登录
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ) : (
-              <Button
-                variant="ghost"
-                onClick={() => signIn("google")}
-              >
-                登录
-              </Button>
-            )}
+    <nav className="bg-background border-b h-16">
+      <div className="container mx-auto h-full">
+        <div className="flex justify-between items-center h-full">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="text-xl font-semibold hover:text-primary">
+              ChatDify
+            </Link>
           </div>
         </div>
       </div>
