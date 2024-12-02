@@ -37,6 +37,7 @@ interface AppMessage extends Message {
 interface App {
   name: string;
   apiKey: string;
+  type: string;
   messages?: AppMessage[];
   conversation_id?: string;
 }
@@ -47,12 +48,14 @@ export default function Home() {
   const [newAppName, setNewAppName] = useState('');
   const [newApiKey, setNewApiKey] = useState('');
   const [newMessage, setNewMessage] = useState('');
+  const [newAppType, setNewAppType] = useState('chatbot');
 
   const handleAddApp = () => {
     if (newAppName && newApiKey) {
       setApps([...apps, { 
         name: newAppName, 
         apiKey: newApiKey,
+        type: newAppType,
         messages: [
           {
             id: '1',
@@ -64,6 +67,7 @@ export default function Home() {
       }]);
       setNewApiKey('');
       setNewAppName('');
+      setNewAppType('chatbot');
     }
   };
 
@@ -241,6 +245,19 @@ export default function Home() {
                     <p className="text-xs text-muted-foreground">
                       Enter your Dify API key to connect your app
                     </p>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="type" className="text-sm font-medium">
+                      App Type
+                    </label>
+                    <select
+                      id="type"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      value={newAppType}
+                      onChange={(e) => setNewAppType(e.target.value)}
+                    >
+                      <option value="chatbot">Chatbot</option>
+                    </select>
                   </div>
                 </div>
                 <DialogClose asChild>
