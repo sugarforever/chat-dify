@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MoreVertical, Plus, Send, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
+import { MessageDisplay } from "@/components/MessageDisplay"
 
 interface Message {
   id: string;
@@ -197,10 +198,10 @@ export default function Home() {
   return (
     <div className="flex h-full">
       {/* Left Panel - Apps Management */}
-      <div className="w-80 border-r">
-        <div className="p-4">
+      <div className="w-80 border-r flex flex-col h-full">
+        <div className="p-4 flex-1">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Apps</h2>
+            <h2 className="text-lg font-semibold">Dify Apps</h2>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -255,7 +256,7 @@ export default function Home() {
             </Dialog>
           </div>
 
-          <ScrollArea className="h-[calc(100vh-8rem)]">
+          <ScrollArea className="h-[calc(100vh-12rem)]">
             <div className="space-y-1 pr-4">
               {apps.map((app, index) => (
                 <div
@@ -316,7 +317,7 @@ export default function Home() {
                           <span className="font-medium">{message.sender}</span>
                           <span className="text-sm text-muted-foreground">{message.timestamp}</span>
                         </div>
-                        <p className="mt-1 text-sm">{message.content}</p>
+                        <MessageDisplay content={message.content} />
                       </div>
                     </div>
                   </div>
