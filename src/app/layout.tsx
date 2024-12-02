@@ -26,10 +26,10 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
         >
           <Navbar />
-          <main className="container mx-auto h-[calc(100vh-4rem)] overflow-hidden">
+          <main className="flex-1 container mx-auto overflow-hidden">
             {children}
           </main>
           <Footer />
