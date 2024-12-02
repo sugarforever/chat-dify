@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -50,10 +50,23 @@ export default function Home() {
   const [newMessage, setNewMessage] = useState('');
   const [newAppType, setNewAppType] = useState('chatbot');
 
+  useEffect(() => {
+    const savedApps = localStorage.getItem('difyApps');
+    if (savedApps) {
+      setApps(JSON.parse(savedApps));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (apps.length > 0) {
+      localStorage.setItem('difyApps', JSON.stringify(apps));
+    }
+  }, [apps]);
+
   const handleAddApp = () => {
     if (newAppName && newApiKey) {
-      setApps([...apps, { 
-        name: newAppName, 
+      const newApps = [...apps, {
+        name: newAppName,
         apiKey: newApiKey,
         type: newAppType,
         messages: [
@@ -64,7 +77,9 @@ export default function Home() {
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           }
         ]
-      }]);
+      }];
+      setApps(newApps);
+      localStorage.setItem('difyApps', JSON.stringify(newApps));
       setNewApiKey('');
       setNewAppName('');
       setNewAppType('chatbot');
