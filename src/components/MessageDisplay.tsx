@@ -12,7 +12,7 @@ export function MessageDisplay({ content }: MessageDisplayProps) {
         remarkPlugins={[remarkBreaks]}
         className="prose dark:prose-invert max-w-none"
         components={{
-          a: ({ node, ...props }) => (
+          a: ({ ...props }) => (
             <a {...props} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer" />
           ),
           code: ({ ...props }) => (

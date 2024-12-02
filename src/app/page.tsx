@@ -3,11 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MoreVertical, Plus, Send, X } from "lucide-react";
+import { MoreVertical, Plus, Send } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { MessageDisplay } from "@/components/MessageDisplay"
 
@@ -130,7 +128,7 @@ export default function Home() {
       const reader = response.body?.getReader();
       if (!reader) return;
 
-      let assistantMessage = {
+      const assistantMessage = {
         id: Date.now().toString(),
         content: '',
         sender: 'Assistant',
@@ -179,7 +177,7 @@ export default function Home() {
               break;
             } else if (data.event === 'message') {
               assistantMessage.content += data.answer || '';
-              assistantMessage.conversation_id = data.conversation_id;
+              assistantMessage.conversation_id = data.conversation_id || '';
 
               setApps(prevApps => {
                 const newApps = prevApps.map(app => {
