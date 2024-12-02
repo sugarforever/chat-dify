@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MoreVertical, Plus, Send } from "lucide-react";
+import { MoreVertical, Plus, Send, MessageSquare, Key } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { MessageDisplay } from "@/components/MessageDisplay"
 
@@ -212,6 +212,49 @@ export default function Home() {
     }
   };
 
+  const GuideContent = () => (
+    <div className="flex flex-col items-center justify-center h-full w-full mx-auto text-center px-4">
+      <h2 className="text-3xl font-bold mb-8">
+        Welcome to ChatDify
+      </h2>
+      <div className="space-y-8">
+        <div className="p-6 rounded-lg border bg-card hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-full bg-orange-100 dark:bg-orange-900">
+              <MessageSquare className="h-5 w-5 text-orange-500" />
+            </div>
+            <h3 className="font-semibold text-lg">1. Create a Chatbot</h3>
+          </div>
+          <p className="text-muted-foreground">Visit <a href="https://cloud.dify.ai" className="text-orange-500 hover:underline" target="_blank" rel="noopener">cloud.dify.ai</a> to create your chatbot application</p>
+        </div>
+
+        <div className="p-6 rounded-lg border bg-card hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
+              <Key className="h-5 w-5 text-blue-500" />
+            </div>
+            <h3 className="font-semibold text-lg">2. Enable API Access</h3>
+          </div>
+          <p className="text-muted-foreground">Go to your app configuration and create an API key</p>
+        </div>
+
+        <div className="p-6 rounded-lg border bg-card hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+              <Plus className="h-5 w-5 text-green-500" />
+            </div>
+            <h3 className="font-semibold text-lg">3. Add Your App</h3>
+          </div>
+          <p className="text-muted-foreground">Click the + button on the left panel to add your app</p>
+        </div>
+      </div>
+
+      <p className="mt-8 text-lg font-medium text-foreground">
+        Once you've added your app, select it to start chatting!
+      </p>
+    </div>
+  );
+
   return (
     <div className="flex h-full">
       {/* Left Panel - Apps Management */}
@@ -391,9 +434,7 @@ export default function Home() {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            Select an app to start chatting
-          </div>
+          <GuideContent />
         )}
       </div>
     </div>
