@@ -227,13 +227,20 @@ export default function Home() {
                   <Plus className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-900 border shadow-lg">
-                <DialogHeader className="border-b px-6 py-4">
-                  <DialogTitle className="flex items-center justify-between">
-                    <span className="text-xl font-semibold">Add New App</span>
-                  </DialogTitle>
+              <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-900">
+                <DialogHeader className="space-y-4 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                      <Plus className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <DialogTitle className="text-xl font-semibold">Add New App</DialogTitle>
+                      <p className="text-sm text-muted-foreground">Add attributes and manage access</p>
+                    </div>
+                  </div>
                 </DialogHeader>
-                <div className="px-6 py-6 space-y-6">
+
+                <div className="space-y-6">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">
                       App Name
@@ -241,11 +248,15 @@ export default function Home() {
                     <Input
                       id="name"
                       placeholder="Enter app name"
-                      className="h-10 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700"
+                      className="h-10"
                       value={newAppName}
                       onChange={(e) => setNewAppName(e.target.value)}
                     />
+                    <p className="text-xs text-muted-foreground">
+                      This is a local name to help you identify your Dify app. It can be different from your Dify app name.
+                    </p>
                   </div>
+
                   <div className="space-y-2">
                     <label htmlFor="apiKey" className="text-sm font-medium">
                       API Key
@@ -253,7 +264,7 @@ export default function Home() {
                     <Input
                       id="apiKey"
                       placeholder="Dify API Key"
-                      className="h-9"
+                      className="h-10"
                       value={newApiKey}
                       onChange={(e) => setNewApiKey(e.target.value)}
                     />
@@ -261,13 +272,14 @@ export default function Home() {
                       Enter your Dify API key to connect your app
                     </p>
                   </div>
+
                   <div className="space-y-2">
                     <label htmlFor="type" className="text-sm font-medium">
                       App Type
                     </label>
                     <select
                       id="type"
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
                       value={newAppType}
                       onChange={(e) => setNewAppType(e.target.value)}
                     >
@@ -275,15 +287,20 @@ export default function Home() {
                     </select>
                   </div>
                 </div>
-                <DialogClose asChild>
-                  <Button 
-                    className="w-full"
-                    onClick={handleAddApp}
-                    disabled={!newAppName || !newApiKey}
-                  >
-                    Add App
-                  </Button>
-                </DialogClose>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button 
+                      onClick={handleAddApp}
+                      disabled={!newAppName || !newApiKey}
+                    >
+                      Save changes
+                    </Button>
+                  </DialogClose>
+                </div>
               </DialogContent>
             </Dialog>
           </div>
