@@ -250,7 +250,7 @@ export default function Home() {
       </div>
 
       <p className="mt-8 text-lg font-medium text-foreground">
-        Once you've added your app, select it to start chatting!
+        Once you&apos;ve added your app, select it to start chatting!
       </p>
     </div>
   );
