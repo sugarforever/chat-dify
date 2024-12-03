@@ -386,7 +386,7 @@ export default function Home() {
             transition={{ delay: 0.5, duration: 0.5 }}
           >
             <p className="text-xl text-zinc-400">
-              Once you've added your app, select it to start chatting!
+              Once you&apos;ve added your app, select it to start chatting!
             </p>
           </motion.div>
         </div>
