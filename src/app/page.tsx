@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MoreVertical, Plus, Send, MessageSquare, Key, Eye, EyeOff } from "lucide-react";
+import { MoreVertical, Plus, Send, MessageSquare, Key, Eye, EyeOff, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { MessageDisplay } from "@/components/MessageDisplay"
 
@@ -300,7 +300,7 @@ export default function Home() {
                         autoCorrect="off"
                       />
                       <p className="text-xs text-muted-foreground">
-                        This is a local name to help you identify your Dify app. It can be different from your Dify app name.
+                        This is a local name to help you identify your Dify app. It can be different from your Dify app name
                       </p>
                     </div>
 
@@ -378,17 +378,38 @@ export default function Home() {
               {apps.map((app, index) => (
                 <div
                   key={index}
-                  className={`flex items-center px-3 py-2 rounded-md cursor-pointer transition-colors hover:bg-muted/50 ${
+                  className={`group flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-colors hover:bg-muted/50 ${
                     selectedApp?.name === app.name ? 'bg-muted' : ''
                   }`}
-                  onClick={() => setSelectedApp(app)}
                 >
-                  <div>
+                  <div
+                    className="flex-1"
+                    onClick={() => setSelectedApp(app)}
+                  >
                     <div className="font-medium">{app.name}</div>
                     <div className="text-sm text-muted-foreground">
                       API Key: {app.apiKey.slice(0, 2)}•••••{app.apiKey.slice(-2)}
                     </div>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const confirmed = window.confirm(`Are you sure you want to delete ${app.name}?`);
+                      if (confirmed) {
+                        const newApps = apps.filter(a => a.name !== app.name);
+                        setApps(newApps);
+                        if (selectedApp?.name === app.name) {
+                          setSelectedApp(null);
+                        }
+                        localStorage.setItem('difyApps', JSON.stringify(newApps));
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                  </Button>
                 </div>
               ))}
             </div>
