@@ -158,105 +158,145 @@ export default function Home() {
     setNewMessage("");
 
     try {
-      const response = await fetch("https://api.dify.ai/v1/chat-messages", {
+      const endpoint = selectedApp.type === 'workflow' 
+        ? 'https://api.dify.ai/v1/workflows/run'
+        : 'https://api.dify.ai/v1/chat-messages';
+
+      const payload = selectedApp.type === 'workflow' 
+        ? {
+            inputs: { url: newMessage },
+            response_mode: "blocking",
+            user: "user-123",
+          }
+        : {
+            inputs: {},
+            query: newMessage,
+            response_mode: "streaming",
+            conversation_id: selectedApp.conversation_id || "",
+            user: "user-123",
+          };
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${selectedApp.apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          inputs: {},
-          query: newMessage,
-          response_mode: "streaming",
-          conversation_id: selectedApp.conversation_id || "",
-          user: "user-123",
-        }),
+        body: JSON.stringify(payload),
       });
 
-      const reader = response.body?.getReader();
-      if (!reader) return;
+      if (selectedApp.type === 'workflow') {
+        const data = await response.json();
+        const assistantMessage = {
+          id: Date.now().toString(),
+          content: data.data.outputs.keywords || "No response",
+          sender: "Assistant",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
 
-      const assistantMessage = {
-        id: Date.now().toString(),
-        content: "",
-        sender: "Assistant",
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        conversation_id: "",
-      };
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = new TextDecoder().decode(value);
-        const lines = chunk.split("\n");
-
-        for (const line of lines) {
-          console.log(line);
-          if (line.startsWith("data: ")) {
-            const data: DifyResponse = JSON.parse(line.slice(6));
-
-            if (data.event === "error") {
-              const errorMessage = {
-                id: Date.now().toString(),
-                content: `Error: ${data.message || "An error occurred"}`,
-                sender: "Assistant",
-                timestamp: new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-                conversation_id: data.conversation_id,
+        setApps((prevApps) => {
+          const newApps = prevApps.map((app) => {
+            if (app.name === selectedApp.name) {
+              const updatedApp = {
+                ...app,
+                messages: [...(app.messages || []), assistantMessage],
               };
+              setSelectedApp(updatedApp);
+              return updatedApp;
+            }
+            return app;
+          });
+          return newApps;
+        });
+      } else {
+        const reader = response.body?.getReader();
+        if (!reader) return;
 
-              setApps((prevApps) => {
-                const newApps = prevApps.map((app) => {
-                  if (app.name === selectedApp.name) {
-                    const updatedApp = {
-                      ...app,
-                      messages: [...(app.messages || []), errorMessage],
-                      conversation_id: data.conversation_id,
-                    };
-                    setSelectedApp(updatedApp);
-                    return updatedApp;
-                  }
-                  return app;
-                });
-                return newApps;
-              });
+        const assistantMessage = {
+          id: Date.now().toString(),
+          content: "",
+          sender: "Assistant",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          conversation_id: "",
+        };
 
-              reader.cancel();
-              break;
-            } else if (data.event === "message") {
-              assistantMessage.content += data.answer || "";
-              assistantMessage.conversation_id = data.conversation_id || "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-              setApps((prevApps) => {
-                const newApps = prevApps.map((app) => {
-                  if (app.name === selectedApp.name) {
-                    const messages = [...(app.messages || [])];
-                    const lastMessage = messages[messages.length - 1];
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split("\n");
 
-                    if (lastMessage.sender === "Assistant") {
-                      messages[messages.length - 1] = assistantMessage;
-                    } else {
-                      messages.push(assistantMessage);
+          for (const line of lines) {
+            console.log(line);
+            if (line.startsWith("data: ")) {
+              const data: DifyResponse = JSON.parse(line.slice(6));
+
+              if (data.event === "error") {
+                const errorMessage = {
+                  id: Date.now().toString(),
+                  content: `Error: ${data.message || "An error occurred"}`,
+                  sender: "Assistant",
+                  timestamp: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                  conversation_id: data.conversation_id,
+                };
+
+                setApps((prevApps) => {
+                  const newApps = prevApps.map((app) => {
+                    if (app.name === selectedApp.name) {
+                      const updatedApp = {
+                        ...app,
+                        messages: [...(app.messages || []), errorMessage],
+                        conversation_id: data.conversation_id,
+                      };
+                      setSelectedApp(updatedApp);
+                      return updatedApp;
                     }
-
-                    const updatedApp = {
-                      ...app,
-                      messages,
-                      conversation_id: data.conversation_id,
-                    };
-                    setSelectedApp(updatedApp);
-                    return updatedApp;
-                  }
-                  return app;
+                    return app;
+                  });
+                  return newApps;
                 });
-                return newApps;
-              });
+
+                reader.cancel();
+                break;
+              } else if (data.event === "message") {
+                assistantMessage.content += data.answer || "";
+                assistantMessage.conversation_id = data.conversation_id || "";
+
+                setApps((prevApps) => {
+                  const newApps = prevApps.map((app) => {
+                    if (app.name === selectedApp.name) {
+                      const messages = [...(app.messages || [])];
+                      const lastMessage = messages[messages.length - 1];
+
+                      if (lastMessage.sender === "Assistant") {
+                        messages[messages.length - 1] = assistantMessage;
+                      } else {
+                        messages.push(assistantMessage);
+                      }
+
+                      const updatedApp = {
+                        ...app,
+                        messages,
+                        conversation_id: data.conversation_id,
+                      };
+                      setSelectedApp(updatedApp);
+                      return updatedApp;
+                    }
+                    return app;
+                  });
+                  return newApps;
+                });
+              }
             }
           }
         }
@@ -454,7 +494,11 @@ export default function Home() {
                         onChange={(e) => setNewAppType(e.target.value)}
                       >
                         <option value="chatbot">Chatbot</option>
+                        <option value="workflow">Workflow</option>
                       </select>
+                      <p className="text-xs text-muted-foreground">
+                        Choose between a Chatbot or Workflow application type
+                      </p>
                     </div>
                   </div>
                 </form>
