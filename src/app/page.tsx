@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MoreVertical, Plus, Send, MessageSquare, Key } from "lucide-react";
+import { MoreVertical, Plus, Send, MessageSquare, Key, Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { MessageDisplay } from "@/components/MessageDisplay"
 
@@ -47,6 +47,7 @@ export default function Home() {
   const [newApiKey, setNewApiKey] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [newAppType, setNewAppType] = useState('chatbot');
+  const [showApiKey, setShowApiKey] = useState(false);
 
   useEffect(() => {
     const savedApps = localStorage.getItem('difyApps');
@@ -281,53 +282,79 @@ export default function Home() {
                   </div>
                 </DialogHeader>
 
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium">
-                      App Name
-                    </label>
-                    <Input
-                      id="name"
-                      placeholder="Enter app name"
-                      className="h-10"
-                      value={newAppName}
-                      onChange={(e) => setNewAppName(e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      This is a local name to help you identify your Dify app. It can be different from your Dify app name.
-                    </p>
-                  </div>
+                <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label htmlFor="name" className="text-sm font-medium">
+                        App Name
+                      </label>
+                      <Input
+                        id="name"
+                        placeholder="Enter app name"
+                        className="h-10"
+                        value={newAppName}
+                        onChange={(e) => setNewAppName(e.target.value)}
+                        autoComplete="off"
+                        data-form-type="other"
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        This is a local name to help you identify your Dify app. It can be different from your Dify app name.
+                      </p>
+                    </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="apiKey" className="text-sm font-medium">
-                      API Key
-                    </label>
-                    <Input
-                      id="apiKey"
-                      placeholder="Dify API Key"
-                      className="h-10"
-                      value={newApiKey}
-                      onChange={(e) => setNewApiKey(e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Enter your Dify API key to connect your app
-                    </p>
-                  </div>
+                    <div className="space-y-2">
+                      <label htmlFor="apiKey" className="text-sm font-medium">
+                        API Key
+                      </label>
+                      <div className="relative">
+                        <Input
+                          id="apiKey"
+                          type={showApiKey ? "text" : "password"}
+                          placeholder="Dify API Key"
+                          className="h-10 pr-10"
+                          value={newApiKey}
+                          onChange={(e) => setNewApiKey(e.target.value)}
+                          autoComplete="off"
+                          data-form-type="other"
+                          autoCapitalize="off"
+                          autoCorrect="off"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-0 top-0 h-10 w-10"
+                          onClick={() => setShowApiKey(!showApiKey)}
+                        >
+                          {showApiKey ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Enter your Dify API key to connect your app
+                      </p>
+                    </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="type" className="text-sm font-medium">
-                      App Type
-                    </label>
-                    <select
-                      id="type"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
-                      value={newAppType}
-                      onChange={(e) => setNewAppType(e.target.value)}
-                    >
-                      <option value="chatbot">Chatbot</option>
-                    </select>
+                    <div className="space-y-2">
+                      <label htmlFor="type" className="text-sm font-medium">
+                        App Type
+                      </label>
+                      <select
+                        id="type"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                        value={newAppType}
+                        onChange={(e) => setNewAppType(e.target.value)}
+                      >
+                        <option value="chatbot">Chatbot</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
+                </form>
 
                 <div className="flex justify-end gap-3 mt-6">
                   <DialogClose asChild>
@@ -426,6 +453,8 @@ export default function Home() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   className="flex-1"
+                  autoComplete="new-password"
+                  spellCheck="false"
                 />
                 <Button onClick={handleSendMessage} size="icon">
                   <Send className="h-5 w-5" />
